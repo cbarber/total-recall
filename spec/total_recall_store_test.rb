@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require './lib/total_recall_store'
+require './lib/total_recall/store'
 require 'tempfile'
 
 describe TotalRecall::Store do

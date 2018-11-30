@@ -1,8 +1,10 @@
 #!ruby
 # frozen_string_literal: true
+require 'set'
 
 module TotalRecall
   class Store
+    DEFAULT_FILENAME = '~/.total_recall.store'
 
     def initialize
       @commands = Hash.new(Set.new)
@@ -25,17 +27,21 @@ module TotalRecall
       existing_predictions.first(number_of_predictions)
     end
 
-    def save(filename:)
+    def save(filename: DEFAULT_FILENAME)
       TotalRecall::Store.save(store: self, filename: filename)
     end
 
     class << self
-      def save(store:, filename:)
+      def save(store:, filename: DEFAULT_FILENAME)
         File.open(filename, 'wb') { |f| f.write(Marshal.dump(store)) }
       end
 
-      def load(filename:)
-        Marshal.load(File.binread(filename))
+      def load(filename: DEFAULT_FILENAME)
+        if File.exist? filename
+          Marshal.load(File.binread(filename))
+        else
+          TotalRecall::Store.new
+        end
       end
     end
   end

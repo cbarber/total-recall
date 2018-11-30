@@ -8,4 +8,5 @@ Gem::Specification.new do |s|
   ]
   s.require_paths = ['lib']
   s.authors = ['Craig Barber', 'Josh Harding']
+  s.executables << 'total-recall'
 end

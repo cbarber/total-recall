@@ -29,8 +29,7 @@ cmd_opts = case cmd
 # puts "Subcommand options: #{cmd_opts.inspect}"
 # puts "Remaining arguments: #{ARGV.inspect}"
 
-quaid_store_file = '~/.total_recall.store'
-@trs             = File.exist?(quaid_store_file) ? Quaid::Store.load(filename: quaid_store_file) : Quaid::Store.new
+@trs = File.exist?(quaid_store_file) ? Quaid::Store.load(filename: quaid_store_file) : Quaid::Store.new
 
 case cmd
 when "add"

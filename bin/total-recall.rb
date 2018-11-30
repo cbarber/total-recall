@@ -1,6 +1,7 @@
+#!ruby
 require 'bundler/setup'
 require 'optimist'
-require './lib/quaid_store'
+require 'total_recall/store'
 
 SUB_COMMANDS = %w(add predict)
 global_opts = Optimist::options do
@@ -24,12 +25,7 @@ cmd_opts = case cmd
              Optimist::die "unknown subcommand! Please run either quaid add or quaid predict"
            end
 
-# puts "Global options: #{global_opts.inspect}"
-# puts "Subcommand: #{cmd.inspect}"
-# puts "Subcommand options: #{cmd_opts.inspect}"
-# puts "Remaining arguments: #{ARGV.inspect}"
-
-@trs = File.exist?(quaid_store_file) ? Quaid::Store.load(filename: quaid_store_file) : Quaid::Store.new
+@trs = File.exist?(TotalRecall::Store::DEFAULT_FILENAME) ? TotalRecall::Store.load(filename: TotalRecall::Store::DEFAULT_FILENAME) : TotalRecall::Store.new
 
 case cmd
 when "add"

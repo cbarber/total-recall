@@ -1,7 +1,6 @@
 #!ruby
-require 'bundler/setup'
 require 'optimist'
-require 'total_recall/store'
+require 'total_recall'
 
 SUB_COMMANDS = %w(add predict)
 global_opts = Optimist::options do
@@ -22,7 +21,7 @@ cmd_opts = case cmd
                opt :'previous-command', "last command that you ran"
              end
            else
-             Optimist::die "unknown subcommand! Please run either quaid add or quaid predict"
+             Optimist::die "unknown subcommand! Please run either total-recall add or total-recall predict"
            end
 
 @trs = File.exist?(TotalRecall::Store::DEFAULT_FILENAME) ? TotalRecall::Store.load(filename: TotalRecall::Store::DEFAULT_FILENAME) : TotalRecall::Store.new
@@ -30,7 +29,7 @@ cmd_opts = case cmd
 case cmd
 when "add"
   @trs.add(command: cmd_opts[:command], previous_command: cmd_opts[:'previous-command'])
-  @trs.save(filename: quaid_store_file)
+  @trs.save
 when "predict"
-  @trs.predict(command: cmd_opts[:command])
+  @trs.predictions(previous_command: cmd_opts[:command])
 end

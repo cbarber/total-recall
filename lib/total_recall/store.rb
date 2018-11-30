@@ -33,12 +33,12 @@ module TotalRecall
 
     class << self
       def save(store:, filename: DEFAULT_FILENAME)
-        File.open(filename, 'wb') { |f| f.write(Marshal.dump(store)) }
+        File.open(File.expand_path(filename), 'w+') { |f| f.write(Marshal.dump(store)) }
       end
 
       def load(filename: DEFAULT_FILENAME)
         if File.exist? filename
-          Marshal.load(File.binread(filename))
+          Marshal.load(File.binread(File.expand_path(filename)))
         else
           TotalRecall::Store.new
         end

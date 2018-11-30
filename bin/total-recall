@@ -44,7 +44,7 @@ when "predict"
     puts "Sorry, no predictions for: #{cmd_opts[:'previous-command']}"
   else
     predictions.each_with_index do |prediction, idx|
-      puts "#{idx}) #{prediction.string}"
+      puts "#{idx+1}) #{prediction.string}"
     end
   end
 when "import"

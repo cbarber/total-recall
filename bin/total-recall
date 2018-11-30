@@ -12,13 +12,13 @@ cmd = ARGV.shift # get the subcommand
 cmd_opts = case cmd
            when "add" # parse delete options
              Optimist::options do
-               opt :'command', "Current shell command"
-               opt :'previous-command', "Previous shell command"
+               opt :'command', "Current shell command", required: true
+               opt :'previous-command', "Previous shell command", required: true
              end
            when "predict"  # parse copy options
              Optimist::options do
-               opt :number, "number of predictions"
-               opt :'previous-command', "last command that you ran"
+               opt :number, "number of predictions", default: 3
+               opt :'previous-command', "last command that you ran", required: true
              end
            else
              Optimist::die "unknown subcommand! Please run either total-recall add or total-recall predict"

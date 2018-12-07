@@ -1,0 +1,56 @@
+#!ruby
+require 'optimist'
+require 'total_recall'
+
+SUB_COMMANDS = %w(add predict import)
+global_opts = Optimist::options do
+  banner "predictive shell history"
+  stop_on SUB_COMMANDS
+end
+
+cmd = ARGV.shift # get the subcommand
+cmd_opts = case cmd
+           when "add" # parse delete options
+             Optimist::options do
+               opt :'command', "Current shell command", type: String, required: true
+               opt :'previous-command', "Previous shell command", type: String, required: true
+             end
+           when "predict"  # parse copy options
+             Optimist::options do
+               opt :number, "number of predictions", default: 3
+               opt :'previous-command', "last command that you ran", type: String, required: true
+             end
+           when "import"
+             # noop...
+           when "dump"
+             # noop...
+           else
+             Optimist::die "unknown subcommand! Please run either total-recall add or total-recall predict"
+           end
+
+if File.exist?(File.expand_path(TotalRecall::Store::DEFAULT_FILENAME))
+  @trs = TotalRecall::Store.load(filename: TotalRecall::Store::DEFAULT_FILENAME)
+else
+  @trs = TotalRecall::Store.new
+end
+
+case cmd
+when "add"
+  @trs.add(command: cmd_opts[:command], previous_command: cmd_opts[:'previous-command'])
+  @trs.save
+when "predict"
+  predictions = @trs.predictions(previous_command: cmd_opts[:'previous-command'], number_of_predictions: cmd_opts[:number])
+  if predictions.count == 0
+    puts "Sorry, no predictions for: #{cmd_opts[:'previous-command']}"
+  else
+    predictions.each_with_index do |prediction, idx|
+      puts "#{idx+1}) #{prediction.string}"
+    end
+  end
+when "import"
+  importer = TotalRecall::Importer.new(@trs)
+  importer.import
+  @trs.save
+when "dump"
+  @trs.dump
+end

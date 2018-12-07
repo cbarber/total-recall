@@ -11,7 +11,7 @@ module TotalRecall
     end
 
     protected def history
-      Logging.logger.info("Fetching history for #{@shell}")
+      Logging.logger.debug("Fetching history for #{@shell}")
       case @shell
       when 'bash', 'dash', 'zsh'
         return numbered_history_from_histfile
@@ -21,14 +21,19 @@ module TotalRecall
     end
 
     protected def history_from_builtin
-      Logging.logger.info('Fetching history from builtin')
+      Logging.logger.debug('Fetching history from builtin')
       `#{@shell} -c history`.split(/\r?\n/)
     end
 
     protected def numbered_history_from_histfile
-      Logging.logger.info("Fetching history from #{@histfile}")
-      File.readlines(@histfile).map do |line|
-        line.sub(/^\s+[0-9]+\s+/, '')
+      Logging.logger.debug("Fetching history from #{@histfile}")
+      File.readlines(@histfile, encoding: 'UTF-8').map do |line|
+        line.encode!('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
+        if @shell != 'zsh'
+          line.sub(/^\s+[0-9]+\s+/, '').chomp
+        else
+          line.sub(/^:\s+[0-9:]+;/, '').chomp
+        end
       end
     end
 
